@@ -1,0 +1,1433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Melon Miles</title>
+  <meta name="description" content="Melon Miles picks three trip ideas from your month, budget, climate, and vibe, plus a packing list and a shareable pixel card.">
+  <meta name="theme-color" content="#d7f0f0">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E✈️%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&amp;display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --green: #d7f0f0;
+      --soda: #ffe8d4;
+      --ink: #3b2b1f;
+      --teal: #2f4b4b;
+      --coral: #f7cfb0;
+      --sand: #fdf3e7;
+      --fruit: #ff6b4a;
+      --line: 4px;
+    }
+
+    * { box-sizing: border-box; }
+
+    [hidden] { display: none !important; }
+
+    html, body { min-height: 100%; }
+
+    body {
+      margin: 0;
+      background: var(--green);
+      color: var(--teal);
+      font-family: "Press Start 2P", "Courier New", monospace;
+      font-size: 0.75rem;
+      line-height: 1.8;
+      letter-spacing: 0;
+      color-scheme: light;
+    }
+
+    body.modal-open { overflow: hidden; }
+
+    .wrap {
+      width: min(820px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 48px;
+    }
+
+    h1, h2, h3, p { margin: 0; }
+
+    h1 {
+      font-size: clamp(1rem, 5vw, 1.6rem);
+      line-height: 1.5;
+      font-weight: normal;
+    }
+
+    h2 {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      font-weight: normal;
+    }
+
+    h3 {
+      font-size: 0.85rem;
+      line-height: 1.6;
+      font-weight: normal;
+    }
+
+    button, input, select { font: inherit; color: inherit; }
+
+    :focus { outline: none; }
+
+    :focus-visible {
+      outline: 3px solid var(--ink);
+      outline-offset: 3px;
+    }
+
+    ::selection {
+      background: var(--coral);
+      color: var(--teal);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px 16px;
+      align-items: center;
+      margin-bottom: 22px;
+    }
+
+    .kicker { grid-column: 1 / -1; }
+
+    .hero-copy, .lede { grid-column: 1 / -1; }
+
+    .kicker { font-size: 0.7rem; }
+
+    .hero-mark {
+      flex: none;
+      font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+      font-size: 2.4rem;
+      line-height: 1;
+      background: var(--soda);
+      border: var(--line) solid var(--ink);
+      border-radius: 24px;
+      box-shadow: 4px 4px 0 var(--ink);
+      padding: 12px 14px;
+    }
+
+    main { display: grid; gap: 22px; }
+
+    .panel {
+      background: var(--soda);
+      border: var(--line) solid var(--ink);
+      border-radius: 24px;
+      box-shadow: 4px 4px 0 var(--ink);
+      padding: 18px;
+    }
+
+    form.panel { display: grid; gap: 18px; }
+
+    .grid-2 { display: grid; gap: 16px; }
+
+    .field { display: grid; gap: 8px; }
+
+    .field-label, legend {
+      font-size: 0.7rem;
+      padding: 0;
+    }
+
+    fieldset {
+      border: 0;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 10px;
+    }
+
+    .inline-field {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .inline-field input { flex: 1; min-width: 0; }
+
+    input, select {
+      width: 100%;
+      background: var(--sand);
+      border: var(--line) solid var(--ink);
+      border-radius: 12px;
+      box-shadow: 4px 4px 0 var(--ink);
+      padding: 12px;
+      font-size: 1rem;
+      line-height: 1.4;
+    }
+
+    .choices { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+
+    .choice {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 52px;
+      padding: 12px 8px;
+      text-align: center;
+      background: var(--sand);
+      border: var(--line) solid var(--ink);
+      border-radius: 12px;
+      box-shadow: 4px 4px 0 var(--ink);
+      cursor: pointer;
+    }
+
+    .choice input {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+      box-shadow: none;
+    }
+
+    .choice-copy { display: grid; gap: 6px; justify-items: center; }
+
+    .choice-hint { font-size: 0.7rem; line-height: 1.6; }
+
+    .choice.is-selected { background: var(--coral); }
+
+    .choice:hover { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--ink); }
+
+    .actions { display: grid; gap: 12px; }
+
+    button {
+      background: var(--coral);
+      border: var(--line) solid var(--ink);
+      border-radius: 12px;
+      box-shadow: 4px 4px 0 var(--ink);
+      padding: 14px 12px;
+      cursor: pointer;
+      line-height: 1.6;
+    }
+
+    button.sand { background: var(--sand); }
+
+    button:hover { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--ink); }
+
+    button:active { transform: translate(4px, 4px); box-shadow: 0 0 0 var(--ink); }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.55;
+      transform: none;
+    }
+
+    .alert {
+      display: grid;
+      gap: 8px;
+      background: var(--sand);
+      border: var(--line) solid var(--fruit);
+      border-radius: 12px;
+      padding: 12px;
+    }
+
+    .results-head { display: grid; gap: 10px; }
+
+    .stack { display: grid; gap: 16px; }
+
+    .card { display: grid; gap: 14px; }
+
+    .card-top {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .flag {
+      font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+      font-size: 2rem;
+      line-height: 1;
+    }
+
+    .tags, .mini-pack, .caption, footer p, .kicker { font-size: 0.7rem; }
+
+    .meter {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      background: var(--sand);
+      border: var(--line) solid var(--ink);
+      border-radius: 12px;
+      padding: 8px 10px;
+    }
+
+    .meter-glyphs {
+      font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+      font-size: 1.1rem;
+      line-height: 1;
+    }
+
+    .index {
+      display: inline-block;
+      background: var(--teal);
+      color: var(--sand);
+      border-radius: 8px;
+      padding: 4px 6px;
+      font-size: 0.7rem;
+    }
+
+    .total { font-size: 1.15rem; line-height: 1.5; }
+
+    .split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin: 0;
+    }
+
+    .split div {
+      background: var(--sand);
+      border: var(--line) solid var(--ink);
+      border-radius: 12px;
+      padding: 10px;
+    }
+
+    .split dt { font-size: 0.7rem; }
+    .split dd { margin: 6px 0 0; font-size: 0.85rem; }
+
+    .mini-pack {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .mini-pack li {
+      background: var(--coral);
+      border: 3px solid var(--ink);
+      border-radius: 10px;
+      padding: 6px 8px;
+    }
+
+    .badge {
+      justify-self: start;
+      background: var(--coral);
+      border: 3px solid var(--ink);
+      border-radius: 10px;
+      padding: 4px 8px;
+    }
+
+    .pack {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 10px;
+    }
+
+    .pack-item {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--sand);
+      border: var(--line) solid var(--ink);
+      border-radius: 12px;
+      box-shadow: 4px 4px 0 var(--ink);
+      padding: 10px 12px;
+      cursor: pointer;
+    }
+
+    .pack-item input {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+      box-shadow: none;
+    }
+
+    .px-box {
+      width: 22px;
+      height: 22px;
+      flex: none;
+      border: 3px solid var(--ink);
+      background: var(--green);
+    }
+
+    .pack-item.is-checked .px-box { background: var(--fruit); }
+
+    .pack-item.is-checked .px-box::after {
+      content: "";
+      display: block;
+      width: 8px;
+      height: 8px;
+      margin: 4px;
+      background: var(--sand);
+    }
+
+    .pack-item input:focus-visible + .px-box {
+      outline: 3px solid var(--ink);
+      outline-offset: 3px;
+    }
+
+    #packing-section,
+    section[aria-labelledby="results-heading"] { display: grid; gap: 14px; }
+
+    footer { margin-top: 22px; }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      display: grid;
+      place-items: center;
+      padding: 16px;
+      background: rgba(59, 43, 31, 0.72);
+    }
+
+    .overlay-card {
+      width: min(560px, 100%);
+      max-height: min(92vh, 920px);
+      overflow: auto;
+      display: grid;
+      gap: 16px;
+    }
+
+    .reels {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      height: 96px;
+      overflow: hidden;
+      background: var(--sand);
+      border: var(--line) solid var(--ink);
+      border-radius: 12px;
+      box-shadow: 4px 4px 0 var(--ink);
+    }
+
+    .reel { height: 96px; overflow: hidden; }
+
+    .fruit {
+      height: 96px;
+      display: grid;
+      place-items: center;
+      font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+      font-size: 2rem;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .card {
+      animation: pop 0.4s steps(5, end) backwards;
+    }
+
+    .card:nth-child(2) { animation-delay: 0.08s; }
+    .card:nth-child(3) { animation-delay: 0.16s; }
+
+    @keyframes pop {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    @media (min-width: 720px) {
+      .panel { padding: 24px; }
+      .grid-2 { grid-template-columns: 1fr 1fr; }
+      .actions { grid-template-columns: 1.3fr 1fr; }
+    }
+
+    @media (max-width: 719px) {
+      .choices { grid-template-columns: 1fr; }
+      .actions button, .card > button { width: 100%; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .card { animation: none; }
+      .choice:hover, button:hover, button:active { transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <noscript>
+    <div class="wrap">
+      <header class="hero">
+        <div class="hero-copy">
+          <h1>Melon Miles</h1>
+          <p>A melon soda trip picker. Choose a month, a budget, and a mood. Get three destinations, a packing list, and a pixel card.</p>
+        </div>
+      </header>
+      <div class="panel">
+        <p>Melon Miles needs JavaScript to rank destinations, build a packing list, and draw a share card.</p>
+      </div>
+    </div>
+  </noscript>
+
+  <div id="app" hidden>
+    <div id="page" class="wrap">
+      <header class="hero">
+        <p class="kicker">Melon soda trip picker</p>
+        <h1>Melon Miles</h1>
+        <div class="hero-mark" aria-hidden="true">✈️</div>
+        <p class="lede">Choose a month, a budget, and a mood. Get three destinations, a packing list, and a pixel card.</p>
+      </header>
+
+      <main>
+        <form id="trip-form" class="panel" novalidate>
+          <h2>Plan the trip</h2>
+
+          <div class="grid-2">
+            <div class="field">
+              <label class="field-label" for="origin">Flying from</label>
+              <select id="origin" name="origin"></select>
+            </div>
+            <div class="field">
+              <label class="field-label" for="month">Month</label>
+              <select id="month" name="month"></select>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="field">
+              <label class="field-label" for="duration">Duration</label>
+              <div class="inline-field">
+                <input id="duration" name="duration" type="number" min="1" step="1" value="7" inputmode="numeric">
+                <span>days</span>
+              </div>
+            </div>
+            <div class="field">
+              <label class="field-label" for="budget">Budget (GBP)</label>
+              <div class="inline-field">
+                <span aria-hidden="true">£</span>
+                <input id="budget" name="budget" type="number" min="100" step="1" value="1500" inputmode="numeric">
+              </div>
+            </div>
+          </div>
+
+          <fieldset>
+            <legend>Temperature</legend>
+            <div class="choices" id="temp-choices">
+              <label class="choice"><input type="radio" name="temp" value="hot" checked><span>Hot</span></label>
+              <label class="choice"><input type="radio" name="temp" value="mild"><span>Mild</span></label>
+              <label class="choice"><input type="radio" name="temp" value="cold"><span>Cold</span></label>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Kind of place</legend>
+            <div class="choices" id="vibe-choices">
+              <label class="choice"><input type="radio" name="vibe" value="sunny" checked><span class="choice-copy"><span>Sunny</span><span class="choice-hint">Blue skies</span></span></label>
+              <label class="choice"><input type="radio" name="vibe" value="lush"><span class="choice-copy"><span>Green</span><span class="choice-hint">Forests and gardens</span></span></label>
+              <label class="choice"><input type="radio" name="vibe" value="shoulder"><span class="choice-copy"><span>Cultural</span><span class="choice-hint">Cities and history</span></span></label>
+            </div>
+          </fieldset>
+
+          <div id="form-alert" class="alert" role="alert" hidden></div>
+
+          <div class="actions">
+            <button type="submit">Find Destinations</button>
+            <button type="button" class="sand" id="surprise-btn">Surprise Me</button>
+          </div>
+        </form>
+
+        <section aria-labelledby="results-heading">
+          <div class="results-head">
+            <h2 id="results-heading" tabindex="-1">Your trips</h2>
+            <p id="status" role="status">Change any field. Then find destinations, or take a surprise.</p>
+            <p id="canvas-fallback" hidden>Sharing needs a browser that can draw images.</p>
+          </div>
+          <div id="results" class="stack">
+            <div class="panel welcome">
+              <p>Your top 3 will land here.</p>
+            </div>
+          </div>
+        </section>
+
+        <section id="packing-section" class="panel" hidden>
+          <h2>Packing list</h2>
+          <p id="packing-for"></p>
+          <ul id="packing-list" class="pack"></ul>
+        </section>
+      </main>
+
+      <footer>
+        <p>Nothing is saved when you close this tab.</p>
+      </footer>
+    </div>
+
+    <div id="surprise" class="overlay" hidden role="dialog" aria-modal="true" aria-labelledby="surprise-title" tabindex="-1">
+      <div class="overlay-card panel">
+        <h2 id="surprise-title">Surprise</h2>
+        <div id="reels" class="reels" aria-hidden="true">
+          <div class="reel"><div class="reel-strip"></div></div>
+          <div class="reel"><div class="reel-strip"></div></div>
+          <div class="reel"><div class="reel-strip"></div></div>
+        </div>
+        <div id="surprise-result" class="stack" hidden></div>
+        <p id="surprise-status" class="sr-only" role="status"></p>
+        <div class="actions">
+          <button type="button" id="surprise-again">Surprise Again</button>
+          <button type="button" class="sand" id="surprise-back">Back</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const MONTHS = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
+
+    const ZONE_ORDER = ["europe", "americas", "asia", "oceania", "africa"];
+    const ZONE_LABEL = {
+      europe: "Europe",
+      americas: "Americas",
+      asia: "Asia",
+      oceania: "Oceania",
+      africa: "Africa / Middle East"
+    };
+
+    const FLIGHTS = {
+      europe: { europe: 150, asia: 700, americas: 600, africa: 500, oceania: 900 },
+      americas: { europe: 500, asia: 900, americas: 300, africa: 700, oceania: 1100 },
+      asia: { europe: 700, asia: 200, americas: 900, africa: 600, oceania: 500 },
+      oceania: { europe: 900, asia: 500, americas: 1100, africa: 800, oceania: 300 },
+      africa: { europe: 500, asia: 600, americas: 700, africa: 300, oceania: 1000 }
+    };
+
+    const AIRPORTS = [
+      { city: "London", code: "LHR", zone: "europe" },
+      { city: "Paris", code: "CDG", zone: "europe" },
+      { city: "Berlin", code: "BER", zone: "europe" },
+      { city: "Rome", code: "FCO", zone: "europe" },
+      { city: "Amsterdam", code: "AMS", zone: "europe" },
+      { city: "New York", code: "JFK", zone: "americas" },
+      { city: "Los Angeles", code: "LAX", zone: "americas" },
+      { city: "Miami", code: "MIA", zone: "americas" },
+      { city: "Toronto", code: "YYZ", zone: "americas" },
+      { city: "Mexico City", code: "MEX", zone: "americas" },
+      { city: "Tokyo", code: "NRT", zone: "asia" },
+      { city: "Singapore", code: "SIN", zone: "asia" },
+      { city: "Dubai", code: "DXB", zone: "asia" },
+      { city: "Mumbai", code: "BOM", zone: "asia" },
+      { city: "Seoul", code: "ICN", zone: "asia" },
+      { city: "Sydney", code: "SYD", zone: "oceania" },
+      { city: "Auckland", code: "AKL", zone: "oceania" },
+      { city: "Johannesburg", code: "JNB", zone: "africa" },
+      { city: "Cape Town", code: "CPT", zone: "africa" },
+      { city: "Istanbul", code: "IST", zone: "africa" }
+    ];
+
+    const DESTINATIONS = [
+      { name: "Canary Islands", flag: "🇪🇸", temp: "hot", vibe: "sunny", region: "europe", months: ["october", "november", "december", "january", "february", "march", "april"], peakMonths: ["january", "february", "march"], dailyCost: 95, packing: ["swimwear", "sunscreen", "light clothes", "sandals"] },
+      { name: "Santorini", flag: "🇬🇷", temp: "hot", vibe: "sunny", region: "europe", months: ["may", "june", "july", "august", "september", "october"], peakMonths: ["june", "july", "september"], dailyCost: 130, packing: ["swimwear", "sunscreen", "light clothes", "comfortable sandals"] },
+      { name: "Lisbon", flag: "🇵🇹", temp: "mild", vibe: "sunny", region: "europe", months: ["march", "april", "may", "june", "september", "october", "november"], peakMonths: ["may", "june", "september"], dailyCost: 90, packing: ["light layers", "sunglasses", "comfortable shoes", "light jacket"] },
+      { name: "Amalfi Coast", flag: "🇮🇹", temp: "mild", vibe: "lush", region: "europe", months: ["april", "may", "june", "september", "october"], peakMonths: ["may", "june", "september"], dailyCost: 140, packing: ["light clothes", "swimwear", "comfortable shoes", "sun hat"] },
+      { name: "Iceland", flag: "🇮🇸", temp: "cold", vibe: "shoulder", region: "europe", months: ["june", "july", "august", "september"], peakMonths: ["july", "august"], dailyCost: 140, packing: ["warm coat", "waterproof jacket", "layers", "sturdy boots"] },
+      { name: "Chamonix", flag: "🇫🇷", temp: "cold", vibe: "sunny", region: "europe", months: ["december", "january", "february", "march"], peakMonths: ["january", "february"], dailyCost: 130, packing: ["ski jacket", "thermal layers", "gloves", "sunglasses"] },
+      { name: "Scottish Highlands", flag: "🇬🇧", temp: "cold", vibe: "lush", region: "europe", months: ["may", "june", "july", "august", "september"], peakMonths: ["june", "july"], dailyCost: 110, packing: ["waterproof jacket", "layers", "hiking boots", "warm sweater"] },
+      { name: "Prague", flag: "🇨🇿", temp: "cold", vibe: "shoulder", region: "europe", months: ["april", "may", "june", "september", "october"], peakMonths: ["may", "september"], dailyCost: 75, packing: ["light coat", "comfortable shoes", "layers", "scarf"] },
+      { name: "Bali", flag: "🇮🇩", temp: "hot", vibe: "lush", region: "asia", months: ["april", "may", "june", "july", "august", "september", "october"], peakMonths: ["july", "august"], dailyCost: 70, packing: ["swimwear", "sunscreen", "light clothes", "rain jacket"] },
+      { name: "Phuket", flag: "🇹🇭", temp: "hot", vibe: "sunny", region: "asia", months: ["november", "december", "january", "february", "march", "april"], peakMonths: ["december", "january", "february"], dailyCost: 85, packing: ["swimwear", "sunscreen", "light clothes", "sandals"] },
+      { name: "Maldives", flag: "🇲🇻", temp: "hot", vibe: "sunny", region: "asia", months: ["december", "january", "february", "march", "april"], peakMonths: ["january", "february", "march"], dailyCost: 180, packing: ["swimwear", "reef-safe sunscreen", "light clothes", "sunglasses"] },
+      { name: "Hoi An", flag: "🇻🇳", temp: "hot", vibe: "lush", region: "asia", months: ["february", "march", "april"], peakMonths: ["february", "march"], dailyCost: 45, packing: ["light clothes", "sunscreen", "rain jacket", "sandals"] },
+      { name: "Kyoto", flag: "🇯🇵", temp: "mild", vibe: "shoulder", region: "asia", months: ["march", "april", "may", "october", "november"], peakMonths: ["april", "november"], dailyCost: 90, packing: ["light layers", "comfortable shoes", "compact umbrella", "scarf"] },
+      { name: "Hanoi", flag: "🇻🇳", temp: "mild", vibe: "lush", region: "asia", months: ["october", "november", "december", "january", "february", "march", "april"], peakMonths: ["november", "december"], dailyCost: 45, packing: ["light layers", "comfortable shoes", "rain jacket", "sun hat"] },
+      { name: "Chiang Mai", flag: "🇹🇭", temp: "mild", vibe: "lush", region: "asia", months: ["november", "december", "january", "february"], peakMonths: ["december", "january"], dailyCost: 50, packing: ["light clothes", "sunscreen", "comfortable shoes", "light jacket"] },
+      { name: "Seoul", flag: "🇰🇷", temp: "cold", vibe: "shoulder", region: "asia", months: ["april", "may", "september", "october", "november"], peakMonths: ["april", "october"], dailyCost: 100, packing: ["coat", "layers", "comfortable shoes", "scarf"] },
+      { name: "Costa Rica", flag: "🇨🇷", temp: "hot", vibe: "lush", region: "americas", months: ["december", "january", "february", "march", "april"], peakMonths: ["january", "february"], dailyCost: 100, packing: ["swimwear", "sunscreen", "light clothes", "insect repellent"] },
+      { name: "Cancun", flag: "🇲🇽", temp: "hot", vibe: "sunny", region: "americas", months: ["december", "january", "february", "march", "april"], peakMonths: ["february", "march"], dailyCost: 115, packing: ["swimwear", "sunscreen", "light clothes", "sunglasses"] },
+      { name: "Cartagena", flag: "🇨🇴", temp: "hot", vibe: "sunny", region: "americas", months: ["december", "january", "february", "march", "april"], peakMonths: ["january", "february"], dailyCost: 70, packing: ["swimwear", "sunscreen", "light clothes", "sandals"] },
+      { name: "Rio de Janeiro", flag: "🇧🇷", temp: "hot", vibe: "lush", region: "americas", months: ["may", "june", "july", "august", "september", "october"], peakMonths: ["june", "july"], dailyCost: 90, packing: ["swimwear", "sunscreen", "light clothes", "sandals"] },
+      { name: "Mexico City", flag: "🇲🇽", temp: "mild", vibe: "shoulder", region: "americas", months: ["march", "april", "may", "october", "november"], peakMonths: ["march", "april"], dailyCost: 65, packing: ["light layers", "comfortable shoes", "sun hat", "light jacket"] },
+      { name: "Quebec City", flag: "🇨🇦", temp: "cold", vibe: "shoulder", region: "americas", months: ["september", "october", "december", "january", "february"], peakMonths: ["september", "october", "december"], dailyCost: 120, packing: ["warm coat", "boots", "layers", "gloves"] },
+      { name: "Cape Town", flag: "🇿🇦", temp: "mild", vibe: "sunny", region: "africa", months: ["november", "december", "january", "february", "march"], peakMonths: ["january", "february"], dailyCost: 80, packing: ["light layers", "sunscreen", "sunglasses", "light jacket"] },
+      { name: "Marrakech", flag: "🇲🇦", temp: "hot", vibe: "sunny", region: "africa", months: ["march", "april", "may", "october", "november"], peakMonths: ["april", "october"], dailyCost: 60, packing: ["light clothes", "sunscreen", "scarf", "comfortable shoes"] },
+      { name: "Zanzibar", flag: "🇹🇿", temp: "hot", vibe: "lush", region: "africa", months: ["june", "july", "august", "september", "october"], peakMonths: ["july", "august"], dailyCost: 90, packing: ["swimwear", "sunscreen", "light clothes", "insect repellent"] },
+      { name: "Petra", flag: "🇯🇴", temp: "mild", vibe: "shoulder", region: "africa", months: ["march", "april", "may", "september", "october", "november"], peakMonths: ["march", "april", "october"], dailyCost: 85, packing: ["light layers", "sturdy shoes", "sun hat", "scarf"] },
+      { name: "Queenstown", flag: "🇳🇿", temp: "cold", vibe: "shoulder", region: "oceania", months: ["march", "april", "may", "september", "october"], peakMonths: ["april", "october"], dailyCost: 140, packing: ["layers", "waterproof jacket", "hiking boots", "warm sweater"] },
+      { name: "Hobart", flag: "🇦🇺", temp: "cold", vibe: "shoulder", region: "oceania", months: ["november", "december", "january", "february", "march"], peakMonths: ["january", "february"], dailyCost: 115, packing: ["layers", "waterproof jacket", "comfortable shoes", "light sweater"] },
+      { name: "Melbourne", flag: "🇦🇺", temp: "mild", vibe: "shoulder", region: "oceania", months: ["march", "april", "may", "september", "october", "november"], peakMonths: ["march", "april", "october"], dailyCost: 125, packing: ["layers", "light coat", "comfortable shoes", "sunglasses"] },
+      { name: "Rotorua", flag: "🇳🇿", temp: "mild", vibe: "lush", region: "oceania", months: ["november", "december", "january", "february", "march", "april"], peakMonths: ["december", "january", "february"], dailyCost: 105, packing: ["light layers", "rain jacket", "comfortable shoes", "swimwear"] }
+    ];
+
+    const FRUITS = ["🍉", "🍊", "🍋", "🍒", "🍇"];
+    const EXTRA = {
+      hot: ["sunglasses", "sandals", "hat"],
+      mild: ["light layers", "comfortable shoes"],
+      cold: ["warm coat", "thermal layers", "gloves", "beanie"],
+      lush: ["insect repellent", "quick-dry towel"]
+    };
+
+    const app = document.getElementById("app");
+    const page = document.getElementById("page");
+    const form = document.getElementById("trip-form");
+    const originSelect = document.getElementById("origin");
+    const monthSelect = document.getElementById("month");
+    const durationInput = document.getElementById("duration");
+    const budgetInput = document.getElementById("budget");
+    const formAlert = document.getElementById("form-alert");
+    const resultsHeading = document.getElementById("results-heading");
+    const statusEl = document.getElementById("status");
+    const resultsEl = document.getElementById("results");
+    const packingSection = document.getElementById("packing-section");
+    const packingFor = document.getElementById("packing-for");
+    const packingList = document.getElementById("packing-list");
+    const surprise = document.getElementById("surprise");
+    const surpriseTitle = document.getElementById("surprise-title");
+    const surpriseResult = document.getElementById("surprise-result");
+    const surpriseStatus = document.getElementById("surprise-status");
+    const reels = document.getElementById("reels");
+    const surpriseAgain = document.getElementById("surprise-again");
+    const surpriseBack = document.getElementById("surprise-back");
+    const canvasFallback = document.getElementById("canvas-fallback");
+
+    const pickByKey = new Map();
+    let displayedPicks = [];
+    let packingKey = "";
+    let lastFocus = null;
+    let lastSurprise = null;
+    let hasSearched = false;
+    let spinning = false;
+    let surpriseToken = 0;
+    let canvasOk = false;
+
+    function esc(value) {
+      return String(value).replace(/[&<>"']/g, (ch) => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+      }[ch]));
+    }
+
+    function cap(value) {
+      return value.charAt(0).toUpperCase() + value.slice(1);
+    }
+
+    const VIBE_LABEL = {
+      sunny: "Sunny",
+      lush: "Green",
+      shoulder: "Cultural"
+    };
+
+    function money(amount) {
+      return "£" + Math.round(amount).toLocaleString("en-GB");
+    }
+
+    function monthName(id) {
+      return cap(id);
+    }
+
+    function meterFromTier(tier) {
+      if (tier === 3) return { glyphs: "🍉🍉🍉", word: "Perfect" };
+      if (tier === 2) return { glyphs: "🍉🍉", word: "Good" };
+      return { glyphs: "🍉", word: "Okay" };
+    }
+
+    function makeKey(pick) {
+      return [pick.dest.name, pick.month, pick.duration, pick.budget, pick.total].join("|");
+    }
+
+    function remember(pick) {
+      pick.key = makeKey(pick);
+      pickByKey.set(pick.key, pick);
+      return pick;
+    }
+
+    function airportByCode(code) {
+      return AIRPORTS.find((airport) => airport.code === code) || null;
+    }
+
+    function cheapestFlight(zone) {
+      return Math.min(...Object.values(FLIGHTS[zone]));
+    }
+
+    function minimumBudget(zone, duration) {
+      const cheapestDaily = Math.min(...DESTINATIONS.map((dest) => dest.dailyCost));
+      const raw = cheapestDaily * duration + cheapestFlight(zone);
+      return Math.max(100, Math.ceil(raw / 50) * 50);
+    }
+
+    function syncChoices() {
+      document.querySelectorAll(".choice").forEach((label) => {
+        label.classList.toggle("is-selected", label.querySelector("input").checked);
+      });
+    }
+
+    function fillForm() {
+      ZONE_ORDER.forEach((zone) => {
+        const group = document.createElement("optgroup");
+        group.label = ZONE_LABEL[zone];
+        AIRPORTS.filter((airport) => airport.zone === zone).forEach((airport) => {
+          const option = document.createElement("option");
+          option.value = airport.code;
+          option.textContent = airport.city + " (" + airport.code + ")";
+          if (airport.code === "LHR") option.selected = true;
+          group.appendChild(option);
+        });
+        originSelect.appendChild(group);
+      });
+
+      const current = MONTHS[new Date().getMonth()];
+      MONTHS.forEach((month) => {
+        const option = document.createElement("option");
+        option.value = month;
+        option.textContent = monthName(month);
+        if (month === current) option.selected = true;
+        monthSelect.appendChild(option);
+      });
+      syncChoices();
+    }
+
+    function readTrip() {
+      const notes = [];
+      let duration = Number(durationInput.value);
+      if (!Number.isFinite(duration) || duration < 1) {
+        duration = 1;
+        durationInput.value = "1";
+        notes.push("Duration needs at least 1 day, so it is set to 1.");
+      } else {
+        duration = Math.round(duration);
+        durationInput.value = String(duration);
+      }
+
+      const airport = airportByCode(originSelect.value);
+      const month = monthSelect.value;
+      const tempInput = form.querySelector('input[name="temp"]:checked');
+      const vibeInput = form.querySelector('input[name="vibe"]:checked');
+      const temp = tempInput ? tempInput.value : "";
+      const vibe = vibeInput ? vibeInput.value : "";
+
+      if (!airport || !month || !temp || !vibe) {
+        return { ok: false, reason: "form", notes, messages: ["Choose an airport, month, temperature, and vibe."] };
+      }
+
+      const budgetRaw = Number(budgetInput.value);
+      if (!Number.isFinite(budgetRaw)) {
+        return { ok: false, reason: "budget", notes, messages: notes.concat(["Enter a budget of at least £100."]) };
+      }
+
+      const budget = Math.round(budgetRaw);
+      budgetInput.value = String(budget);
+      if (budget < 100) {
+        const floor = minimumBudget(airport.zone, duration);
+        const dayWord = duration === 1 ? "day" : "days";
+        return {
+          ok: false,
+          reason: "budget",
+          notes,
+          messages: notes.concat([
+            "Budgets under £100 are too small for this oracle. For " + duration + " " + dayWord + " from " + airport.city + ", try at least " + money(floor) + "."
+          ])
+        };
+      }
+
+      return { ok: true, notes, trip: { airport, month, temp, vibe, budget, duration } };
+    }
+
+    function showAlerts(messages, reason) {
+      if (!messages || !messages.length) {
+        formAlert.hidden = true;
+        formAlert.textContent = "";
+        budgetInput.removeAttribute("aria-invalid");
+        budgetInput.removeAttribute("aria-describedby");
+        return;
+      }
+      formAlert.hidden = false;
+      formAlert.innerHTML = messages.map((message) => "<p>" + esc(message) + "</p>").join("");
+      if (reason === "budget") {
+        budgetInput.setAttribute("aria-invalid", "true");
+        budgetInput.setAttribute("aria-describedby", "form-alert");
+      } else {
+        budgetInput.removeAttribute("aria-invalid");
+        budgetInput.removeAttribute("aria-describedby");
+      }
+    }
+
+    function lowestTrip(zone) {
+      let best = Infinity;
+      DESTINATIONS.forEach((dest) => {
+        const total = FLIGHTS[zone][dest.region] + dest.dailyCost;
+        if (total < best) best = total;
+      });
+      return best;
+    }
+
+    function buildPick(dest, trip, days) {
+      const flight = FLIGHTS[trip.airport.zone][dest.region];
+      const stay = dest.dailyCost * days;
+      const total = flight + stay;
+      const sameMonth = dest.months.includes(trip.month);
+      const sameTemp = dest.temp === trip.temp;
+      const sameVibe = dest.vibe === trip.vibe;
+      const fullLength = days === trip.duration;
+      return {
+        dest,
+        flight,
+        stay,
+        total,
+        peak: sameMonth && dest.peakMonths.includes(trip.month),
+        tier: total <= trip.budget * 0.9 ? 3 : 2,
+        month: trip.month,
+        duration: days,
+        budget: trip.budget,
+        fit: (fullLength ? 4 : 0) + (sameMonth ? 2 : 0) + (sameTemp ? 1 : 0) + (sameVibe ? 1 : 0),
+        exact: fullLength && sameMonth && sameTemp && sameVibe,
+        shortStay: !fullLength
+      };
+    }
+
+    function byBestValue(a, b) {
+      if (b.fit !== a.fit) return b.fit - a.fit;
+      if (b.tier !== a.tier) return b.tier - a.tier;
+      if (a.peak !== b.peak) return a.peak ? -1 : 1;
+      if (a.total !== b.total) return a.total - b.total;
+      return a.dest.dailyCost - b.dest.dailyCost;
+    }
+
+    function evaluate(trip) {
+      const full = [];
+      const shorter = [];
+      DESTINATIONS.forEach((dest) => {
+        const flight = FLIGHTS[trip.airport.zone][dest.region];
+        if (flight >= trip.budget) return;
+        const maxDays = Math.min(trip.duration, Math.floor((trip.budget - flight) / dest.dailyCost));
+        if (maxDays < 1) return;
+        const pick = buildPick(dest, trip, maxDays);
+        if (pick.total > trip.budget) return;
+        if (maxDays === trip.duration) full.push(pick);
+        else shorter.push(pick);
+      });
+      const shortened = full.length === 0 && shorter.length > 0;
+      const pool = shortened ? shorter : full;
+      pool.sort(byBestValue);
+      const exact = pool.filter((pick) => pick.exact);
+      return {
+        matches: exact.length ? exact : pool,
+        affordable: pool,
+        exact,
+        shortened,
+        lowest: lowestTrip(trip.airport.zone)
+      };
+    }
+
+    function fullPacking(dest, duration) {
+      const items = [];
+      const push = (item) => {
+        if (!items.includes(item)) items.push(item);
+      };
+      dest.packing.forEach(push);
+      (EXTRA[dest.temp] || []).forEach(push);
+      if (dest.vibe === "lush") EXTRA.lush.forEach(push);
+      if (duration >= 10) ["laundry kit", "extra underwear"].forEach(push);
+      if (duration >= 14) ["a second pair of shoes", "small day bag"].forEach(push);
+      return items.slice(0, 12);
+    }
+
+    function cardHTML(pick, options) {
+      const opts = options || {};
+      const meter = meterFromTier(pick.tier);
+      const share = canvasOk
+        ? '<button type="button" data-share="' + esc(pick.key) + '">Share</button>'
+        : "";
+      const index = opts.index
+        ? '<span class="index">' + esc(String(opts.index).padStart(2, "0")) + "</span> "
+        : "";
+      const stretch = pick.shortStay ? '<p class="badge">Shorter stay</p>' : "";
+      const chips = pick.dest.packing.map((item) => "<li>" + esc(cap(item)) + "</li>").join("");
+      return (
+        '<article class="panel card" aria-label="' + esc(pick.dest.name + ", " + meter.word + ", estimated " + money(pick.total)) + '">' +
+          stretch +
+          '<div class="card-top">' +
+            '<span class="flag" aria-hidden="true">' + pick.dest.flag + "</span>" +
+            "<div>" +
+              "<h3>" + index + esc(pick.dest.name) + "</h3>" +
+              '<p class="tags">' + esc(cap(pick.dest.temp)) + " · " + esc(VIBE_LABEL[pick.dest.vibe]) + "</p>" +
+            "</div>" +
+          "</div>" +
+          '<p class="meter"><span class="meter-glyphs" aria-hidden="true">' + meter.glyphs + '</span> <span>' + esc(meter.word) + "</span></p>" +
+          '<p class="total"><span class="sr-only">Estimated total </span>' + esc(money(pick.total)) + "</p>" +
+          '<dl class="split">' +
+            "<div><dt>Flight</dt><dd>" + esc(money(pick.flight)) + "</dd></div>" +
+            "<div><dt>Stay</dt><dd>" + esc(money(pick.stay)) + "</dd></div>" +
+          "</dl>" +
+          '<p class="caption">Stay is food and a room for ' + pick.duration + " day" + (pick.duration === 1 ? "" : "s") + ".</p>" +
+          '<ul class="mini-pack">' + chips + "</ul>" +
+          share +
+        "</article>"
+      );
+    }
+
+    function renderPacking(pick) {
+      if (!pick) {
+        packingKey = "";
+        packingSection.hidden = true;
+        packingList.innerHTML = "";
+        return;
+      }
+      const key = makeKey(pick);
+      if (key === packingKey && !packingSection.hidden) return;
+      packingKey = key;
+      packingSection.hidden = false;
+      const dayWord = pick.duration === 1 ? "day" : "days";
+      packingFor.textContent = "For " + pick.dest.name + " · " + pick.duration + " " + dayWord;
+      packingList.innerHTML = fullPacking(pick.dest, pick.duration).map((item, index) => (
+        '<li><label class="pack-item">' +
+          '<input type="checkbox" id="pack-' + index + '">' +
+          '<span class="px-box" aria-hidden="true"></span>' +
+          "<span>" + esc(cap(item)) + "</span>" +
+        "</label></li>"
+      )).join("");
+    }
+
+    function renderResults(read, found, options) {
+      const notes = read.notes.length ? read.notes.join(" ") + " " : "";
+      const matches = found.matches;
+      const trip = read.trip;
+      displayedPicks = [];
+
+      if (!matches.length) {
+        resultsHeading.textContent = "No matches found";
+        statusEl.textContent = notes + "Nothing fits " + money(trip.budget) + " from " + trip.airport.city + ". The lowest trip in this guide is " + money(found.lowest) + " for 1 day.";
+        resultsEl.innerHTML = "";
+        renderPacking(null);
+      } else {
+        const top = matches.slice(0, 3).map(remember);
+        displayedPicks = top;
+        const dayWord = trip.duration === 1 ? "day" : "days";
+        if (found.shortened) {
+          resultsHeading.textContent = "Fits your budget";
+          statusEl.textContent = notes + "A " + trip.duration + "-day trip doesn't fit " + money(trip.budget) + ". These shorter stays stay inside your budget. Costs are rough estimates in GBP, not live prices.";
+        } else if (!found.exact.length) {
+          resultsHeading.textContent = "Fits your budget";
+          statusEl.textContent = notes + "No " + cap(trip.temp) + " and " + VIBE_LABEL[trip.vibe] + " place fits " + money(trip.budget) + " for " + trip.duration + " " + dayWord + " in " + monthName(trip.month) + ". These stay inside your budget. Costs are rough estimates in GBP, not live prices.";
+        } else {
+          const noun = matches.length === 1 ? "destination matches" : "destinations match";
+          const extra = matches.length > 3
+            ? " Showing the top " + top.length + ". Surprise Me draws from all of them."
+            : "";
+          resultsHeading.textContent = top.length === 1 ? "Top pick" : "Top " + top.length;
+          statusEl.textContent = notes + matches.length + " " + noun + "." + extra + " Costs are rough estimates in GBP, not live prices.";
+        }
+        resultsEl.innerHTML = top.map((pick, index) => cardHTML(pick, { index: index + 1 })).join("");
+        renderPacking(top[0]);
+      }
+
+      if (!options || options.focus !== false) resultsHeading.focus();
+    }
+
+    function presentSurpriseOnPage(pick) {
+      displayedPicks = [pick];
+      const meter = meterFromTier(pick.tier);
+      resultsHeading.textContent = "Your surprise";
+      statusEl.textContent = pick.dest.name + ". " + meter.word + ". Costs are rough estimates in GBP, not live prices.";
+      resultsEl.innerHTML = cardHTML(pick, { index: 1 });
+      packingKey = "";
+      renderPacking(pick);
+    }
+
+    function shuffle(list) {
+      const copy = list.slice();
+      for (let i = copy.length - 1; i > 0; i -= 1) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const hold = copy[i];
+        copy[i] = copy[j];
+        copy[j] = hold;
+      }
+      return copy;
+    }
+
+    function renderSurpriseSuggestions(read, found, pick) {
+      const others = shuffle(found.affordable.filter((item) => item.dest.name !== pick.dest.name));
+      const shown = [pick].concat(others.slice(0, 2)).map(remember);
+      displayedPicks = shown;
+      hasSearched = true;
+      resultsHeading.textContent = "Your surprise";
+      const extra = shown.length > 1 ? " Other ideas that fit " + money(read.trip.budget) + " are listed with it." : "";
+      statusEl.textContent = pick.dest.name + " is the surprise." + extra + " Costs are rough estimates in GBP, not live prices.";
+      resultsEl.innerHTML = shown.map((item, index) => cardHTML(item, { index: index + 1 })).join("");
+      packingKey = "";
+      renderPacking(pick);
+    }
+
+    function findDestinations() {
+      const read = readTrip();
+      if (!read.ok) {
+        showAlerts(read.messages, read.reason);
+        if (read.reason === "budget") budgetInput.focus();
+        return;
+      }
+      showAlerts([]);
+      hasSearched = true;
+      const found = evaluate(read.trip);
+      renderResults(read, found);
+    }
+
+    function fillReels() {
+      document.querySelectorAll(".reel-strip").forEach((strip, reelIndex) => {
+        strip.replaceChildren();
+        for (let copy = 0; copy < 6; copy += 1) {
+          FRUITS.forEach((fruit, fruitIndex) => {
+            const cell = document.createElement("div");
+            cell.className = "fruit";
+            cell.textContent = FRUITS[(fruitIndex + reelIndex) % FRUITS.length];
+            strip.appendChild(cell);
+          });
+        }
+      });
+    }
+
+    function resetReels() {
+      document.querySelectorAll(".reel-strip").forEach((strip) => {
+        strip.style.transform = "translateY(0)";
+      });
+    }
+
+    function spinReels() {
+      const height = 96;
+      const strips = [...document.querySelectorAll(".reel-strip")];
+      const turns = [10, 13, 16];
+      const start = performance.now();
+      const duration = 1500;
+      return new Promise((resolve) => {
+        function frame(now) {
+          const t = Math.min(1, (now - start) / duration);
+          strips.forEach((strip, index) => {
+            const local = Math.min(1, Math.max(0, (t - index * 0.08) / 0.84));
+            const eased = 1 - Math.pow(1 - local, 3);
+            strip.style.transform = "translateY(" + (-eased * turns[index] * height) + "px)";
+          });
+          if (t < 1) requestAnimationFrame(frame);
+          else resolve();
+        }
+        requestAnimationFrame(frame);
+      });
+    }
+
+    function openSurprise() {
+      if (surprise.hidden) lastFocus = document.activeElement;
+      surprise.hidden = false;
+      page.inert = true;
+      document.body.classList.add("modal-open");
+      surprise.focus();
+    }
+
+    function hideDialog() {
+      surpriseToken += 1;
+      surprise.hidden = true;
+      page.inert = false;
+      document.body.classList.remove("modal-open");
+      spinning = false;
+      surpriseAgain.disabled = false;
+      surpriseBack.disabled = false;
+      lastFocus = null;
+    }
+
+    function closeSurprise() {
+      hideDialog();
+      if (!hasSearched && lastSurprise) {
+        presentSurpriseOnPage(lastSurprise);
+        resultsHeading.focus();
+        return;
+      }
+      if (displayedPicks[0]) renderPacking(displayedPicks[0]);
+      document.getElementById("surprise-btn").focus();
+    }
+
+    async function surpriseMe() {
+      if (spinning) return;
+      const read = readTrip();
+      if (!read.ok) {
+        showAlerts(read.messages, read.reason);
+        hideDialog();
+        if (read.reason === "budget") budgetInput.focus();
+        return;
+      }
+      showAlerts([]);
+      const found = evaluate(read.trip);
+      const affordable = found.affordable || [];
+      let choices = affordable;
+      if (lastSurprise) {
+        const others = affordable.filter((item) => item.dest.name !== lastSurprise.dest.name);
+        if (others.length) choices = others;
+      }
+      const picked = choices.length
+        ? choices[Math.floor(Math.random() * choices.length)]
+        : null;
+      const pick = picked ? remember(picked) : null;
+      if (pick) lastSurprise = pick;
+      const revealed = await playSurprise(pick);
+      if (!revealed || surprise.hidden) return;
+      if (pick) renderSurpriseSuggestions(read, found, pick);
+      else renderResults(read, found, { focus: false });
+    }
+    async function playSurprise(pick) {
+      const token = surpriseToken;
+      spinning = true;
+      surpriseAgain.disabled = true;
+      surpriseBack.disabled = true;
+      surpriseResult.hidden = true;
+      surpriseResult.innerHTML = "";
+      surpriseTitle.textContent = "Surprise";
+      surpriseStatus.textContent = "Picking a destination.";
+      openSurprise();
+      const overlayCard = surprise.querySelector(".overlay-card");
+      if (overlayCard) overlayCard.scrollTop = 0;
+      if (reels.querySelector(".fruit") === null) fillReels();
+      reels.hidden = false;
+      resetReels();
+      reels.getBoundingClientRect();
+      await spinReels();
+      if (token !== surpriseToken) return false;
+      reels.hidden = true;
+      surpriseResult.hidden = false;
+      if (!pick) {
+        surpriseTitle.textContent = "No matches found";
+        surpriseResult.innerHTML = "<p>Nothing fits this budget. Try a higher budget or fewer days.</p>";
+        surpriseStatus.textContent = "Nothing fits this budget.";
+      } else {
+        const meter = meterFromTier(pick.tier);
+        surpriseTitle.textContent = "Your surprise";
+        surpriseResult.innerHTML = cardHTML(pick);
+        surpriseStatus.textContent = pick.dest.name + ". " + meter.word + ". " + money(pick.total) + ".";
+      }
+      if (overlayCard) overlayCard.scrollTop = 0;
+      surpriseAgain.disabled = false;
+      surpriseBack.disabled = false;
+      spinning = false;
+      surpriseAgain.focus();
+      return true;
+    }
+
+    function canvasSupported() {
+      const canvas = document.createElement("canvas");
+      return !!(canvas.getContext && canvas.getContext("2d"));
+    }
+
+    function ensureFont() {
+      if (!document.fonts || !document.fonts.load) return Promise.resolve();
+      return Promise.race([
+        document.fonts.load("16px 'Press Start 2P'"),
+        new Promise((resolve) => setTimeout(resolve, 1500))
+      ]).catch(() => {});
+    }
+
+    function drawMelon(ctx, x, y, s) {
+      const rows = [
+        "00111100",
+        "01111110",
+        "11111111",
+        "11111111",
+        "11111111",
+        "11111111",
+        "01111110",
+        "00111100"
+      ];
+      rows.forEach((row, ry) => {
+        [...row].forEach((bit, rx) => {
+          if (bit === "0") return;
+          const edge = row[rx - 1] !== "1" || row[rx + 1] !== "1" || !rows[ry - 1] || rows[ry - 1][rx] !== "1" || !rows[ry + 1] || rows[ry + 1][rx] !== "1";
+          if (edge) ctx.fillStyle = "#3b2b1f";
+          else if (ry === 3) ctx.fillStyle = "#d7f0f0";
+          else if ((rx === 3 && ry === 5) || (rx === 5 && ry === 2) || (rx === 4 && ry === 6)) ctx.fillStyle = "#3b2b1f";
+          else ctx.fillStyle = "#ff6b4a";
+          ctx.fillRect(x + rx * s, y + ry * s, s, s);
+        });
+      });
+    }
+
+    function drawCentered(ctx, text, x, y, maxWidth, lineHeight) {
+      const words = text.split(" ");
+      const lines = [];
+      let line = "";
+      words.forEach((word) => {
+        const test = line ? line + " " + word : word;
+        if (ctx.measureText(test).width > maxWidth && line) {
+          lines.push(line);
+          line = word;
+        } else {
+          line = test;
+        }
+      });
+      if (line) lines.push(line);
+      lines.forEach((part, index) => ctx.fillText(part, x, y + index * lineHeight));
+      return lines.length;
+    }
+
+    async function sharePick(pick) {
+      if (!canvasOk) return;
+      await ensureFont();
+      const canvas = document.createElement("canvas");
+      const width = 640;
+      const height = 800;
+      const scale = 2;
+      canvas.width = width * scale;
+      canvas.height = height * scale;
+      const ctx = canvas.getContext("2d");
+      ctx.setTransform(scale, 0, 0, scale, 0, 0);
+      ctx.imageSmoothingEnabled = false;
+      ctx.fillStyle = "#ffe8d4";
+      ctx.fillRect(0, 0, width, height);
+
+      const block = 8;
+      for (let y = 0; y < height; y += block) {
+        for (let x = 0; x < width; x += block) {
+          const edge = x < 24 || y < 24 || x >= width - 24 || y >= height - 24;
+          if (!edge) continue;
+          ctx.fillStyle = ((x + y) / block) % 2 === 0 ? "#ff6b4a" : "#2f4b4b";
+          ctx.fillRect(x, y, block, block);
+        }
+      }
+      ctx.fillStyle = "#ffe8d4";
+      ctx.fillRect(24, 24, width - 48, height - 48);
+      ctx.fillStyle = "#3b2b1f";
+      ctx.fillRect(24, 24, width - 48, 6);
+      ctx.fillRect(24, height - 30, width - 48, 6);
+      ctx.fillRect(24, 24, 6, height - 48);
+      ctx.fillRect(width - 30, 24, 6, height - 48);
+
+      ctx.textAlign = "center";
+      ctx.textBaseline = "top";
+      ctx.fillStyle = "#2f4b4b";
+      ctx.font = "16px 'Press Start 2P', 'Courier New', monospace";
+      ctx.fillText("MELON MILES", width / 2, 48);
+      drawMelon(ctx, width / 2 - 56, 86, 14);
+
+      ctx.font = "64px 'Apple Color Emoji', 'Segoe UI Emoji', sans-serif";
+      ctx.fillText(pick.dest.flag, width / 2, 220);
+
+      ctx.fillStyle = "#2f4b4b";
+      ctx.font = "22px 'Press Start 2P', 'Courier New', monospace";
+      const nameTop = 304;
+      const used = drawCentered(ctx, pick.dest.name.toUpperCase(), width / 2, nameTop, 500, 34);
+      const meter = meterFromTier(pick.tier);
+      const lines = [
+        { text: monthName(pick.month).toUpperCase(), font: "14px 'Press Start 2P', 'Courier New', monospace" },
+        { text: meter.glyphs, font: "40px 'Apple Color Emoji', 'Segoe UI Emoji', sans-serif" },
+        { text: meter.word.toUpperCase(), font: "16px 'Press Start 2P', 'Courier New', monospace" },
+        { text: money(pick.total), font: "28px 'Press Start 2P', 'Courier New', monospace" },
+        { text: "GBP ESTIMATE", font: "12px 'Press Start 2P', 'Courier New', monospace" }
+      ];
+      const start = nameTop + used * 34 + 20;
+      const end = 688;
+      const step = (end - start) / lines.length;
+      lines.forEach((line, index) => {
+        ctx.font = line.font;
+        ctx.fillStyle = "#2f4b4b";
+        ctx.fillText(line.text, width / 2, start + step * index);
+      });
+
+      for (let x = 48; x < width - 48; x += 16) {
+        ctx.fillStyle = (x / 16) % 2 === 0 ? "#f7cfb0" : "#ff6b4a";
+        ctx.fillRect(x, height - 64, 16, 12);
+      }
+
+      const slug = pick.dest.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+      const link = document.createElement("a");
+      link.href = canvas.toDataURL("image/png");
+      link.download = "melon-miles-" + slug + "-" + pick.month + ".png";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    }
+
+    function onShareClick(event) {
+      const button = event.target.closest("[data-share]");
+      if (!button) return;
+      const pick = pickByKey.get(button.dataset.share);
+      if (pick) sharePick(pick);
+    }
+
+    function trapFocus(event) {
+      if (event.key !== "Tab" || surprise.hidden) return;
+      const nodes = [...surprise.querySelectorAll("button, input, a[href]")].filter((node) => {
+        if (node.disabled || node.hidden) return false;
+        if (node.closest("[hidden]")) return false;
+        return true;
+      });
+      if (!nodes.length) {
+        event.preventDefault();
+        surprise.focus();
+        return;
+      }
+      const first = nodes[0];
+      const last = nodes[nodes.length - 1];
+      if (event.shiftKey && (document.activeElement === first || document.activeElement === surprise)) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+
+    function dataIsValid() {
+      const count = (fn) => DESTINATIONS.filter(fn).length;
+      const regions = { europe: 8, asia: 8, americas: 6, africa: 4, oceania: 4 };
+      const temps = { hot: 12, mild: 10, cold: 8 };
+      const vibes = { sunny: 10, lush: 10, shoulder: 10 };
+      const airportZones = { europe: 5, americas: 5, asia: 5, oceania: 2, africa: 3 };
+      if (DESTINATIONS.length < 30 || AIRPORTS.length < 20) return false;
+      for (const [key, total] of Object.entries(regions)) if (count((d) => d.region === key) !== total) return false;
+      for (const [key, total] of Object.entries(temps)) if (count((d) => d.temp === key) !== total) return false;
+      for (const [key, total] of Object.entries(vibes)) if (count((d) => d.vibe === key) !== total) return false;
+      for (const [key, total] of Object.entries(airportZones)) if (AIRPORTS.filter((a) => a.zone === key).length !== total) return false;
+      const zones = ["europe", "asia", "americas", "africa", "oceania"];
+      for (const origin of zones) {
+        for (const region of zones) {
+          if (typeof FLIGHTS[origin][region] !== "number") return false;
+        }
+      }
+      return DESTINATIONS.every((dest) => (
+        dest.packing.length >= 3 &&
+        dest.packing.length <= 5 &&
+        dest.peakMonths.every((month) => dest.months.includes(month)) &&
+        new Set(DESTINATIONS.map((item) => item.name)).size === DESTINATIONS.length
+      ));
+    }
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      findDestinations();
+    });
+
+    form.addEventListener("change", syncChoices);
+    document.getElementById("surprise-btn").addEventListener("click", () => { surpriseMe(); });
+    surpriseAgain.addEventListener("click", () => { surpriseMe(); });
+    surpriseBack.addEventListener("click", closeSurprise);
+    resultsEl.addEventListener("click", onShareClick);
+    surpriseResult.addEventListener("click", onShareClick);
+    packingList.addEventListener("change", (event) => {
+      const label = event.target.closest(".pack-item");
+      if (label) label.classList.toggle("is-checked", event.target.checked);
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && !surprise.hidden) {
+        event.preventDefault();
+        closeSurprise();
+      }
+    });
+    surprise.addEventListener("keydown", trapFocus);
+    document.querySelectorAll('input[type="number"]').forEach((input) => {
+      input.addEventListener("wheel", () => input.blur(), { passive: true });
+    });
+
+    canvasOk = canvasSupported();
+    if (!canvasOk) canvasFallback.hidden = false;
+    if (!dataIsValid()) {
+      statusEl.textContent = "The destination data is incomplete.";
+    }
+    fillForm();
+    fillReels();
+    app.hidden = false;
+  </script>
+</body>
+</html>
